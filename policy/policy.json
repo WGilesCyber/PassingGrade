@@ -1,0 +1,25 @@
+{
+  "policy_name": "My Org Password Policy",
+  "rules": {
+    "min_length": 12,
+    "max_length": 128,
+    "require_uppercase": true,
+    "require_lowercase": true,
+    "require_digit": true,
+    "require_special": true,
+    "special_chars": "!@#$%^&*()_+-=[]{}|;':\",./<>?",
+    "disallow_spaces": false,
+    "min_unique_chars": 8,
+    "max_repeated_chars": 3,
+    "disallow_common": true,
+    "disallow_sequences": true,
+    "min_sequence_length": 4
+  },
+  "scoring": {
+    "length_bonus_per_char_over_min": 2,
+    "max_length_bonus": 20,
+    "all_complexity_bonus": 10,
+    "unique_chars_bonus_per_char": 1,
+    "max_unique_chars_bonus": 10
+  }
+}
