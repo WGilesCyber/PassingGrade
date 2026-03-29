@@ -16,6 +16,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="PassingGrade — Password Compliance Checker"
     )
+    # --policy lets deployers point at a custom JSON without changing code
     parser.add_argument(
         "--policy",
         metavar="PATH",
@@ -24,12 +25,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    # Deferred imports keep startup fast and avoid circular-import issues
+    # when this module is imported by tests rather than run directly
     from passinggrade.config import load_policy
     from passinggrade.ui.app import PassingGradeApp, show_error_dialog
 
+    # load_policy never raises — it returns (policy, error) so the app can
+    # show a dialog and still run using built-in defaults if the file is bad
     policy, error = load_policy(explicit_path=args.policy)
 
     if error:
+        # Show the error to the user but continue with default policy;
+        # crashing on a bad config file would be worse than running with defaults
         show_error_dialog(error)
 
     app = PassingGradeApp(policy=policy)

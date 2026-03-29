@@ -12,11 +12,17 @@ from dataclasses import dataclass, field
 from passinggrade.config import Policy
 from passinggrade.rules import ALL_RULES, RuleResult
 
+# Tier identifiers — score thresholds are checked in check() below:
+#   score >= 90  → GREAT
+#   score >= 70  → GOOD
+#   score <  70  → OK   (still compliant, just not high-scoring)
+#   any hard rule fails → NOT_COMPLIANT (score forced to 0)
 TIER_GREAT = "great"
 TIER_GOOD = "good"
 TIER_OK = "ok"
 TIER_NOT_COMPLIANT = "not_compliant"
 
+# Human-readable strings shown in the UI result card
 TIER_LABELS = {
     TIER_GREAT: "Great",
     TIER_GOOD: "Good",
@@ -24,6 +30,7 @@ TIER_LABELS = {
     TIER_NOT_COMPLIANT: "Not Compliant",
 }
 
+# Subtitle text displayed below the tier label
 TIER_DESCRIPTIONS = {
     TIER_GREAT: "Your password exceeds all requirements.",
     TIER_GOOD: "Your password meets all requirements.",
@@ -31,19 +38,20 @@ TIER_DESCRIPTIONS = {
     TIER_NOT_COMPLIANT: "Your password does not meet the requirements.",
 }
 
+# Background colors for the result card (dark shades so white text stays readable)
 TIER_COLORS = {
-    TIER_GREAT: "#1B5E20",
-    TIER_GOOD: "#0D47A1",
-    TIER_OK: "#E65100",
-    TIER_NOT_COMPLIANT: "#B71C1C",
+    TIER_GREAT: "#1B5E20",       # dark green
+    TIER_GOOD: "#0D47A1",        # dark blue
+    TIER_OK: "#E65100",          # dark orange
+    TIER_NOT_COMPLIANT: "#B71C1C",  # dark red
 }
 
 
 @dataclass
 class Result:
-    tier: str
-    score: int
-    rules: list[RuleResult] = field(default_factory=list)
+    tier: str                               # One of the TIER_* constants above
+    score: int                              # 0–100+; always 0 when not compliant
+    rules: list[RuleResult] = field(default_factory=list)  # Per-rule outcomes for UI display
 
     @property
     def label(self) -> str:

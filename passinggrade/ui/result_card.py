@@ -42,6 +42,8 @@ class ResultCard(ctk.CTkFrame):
         self._desc_label.configure(text="Enter a password above to check compliance")
 
     def update_tier(self, tier: str) -> None:
+        # Colors, labels, and descriptions all come from the TIER_* dicts in checker.py
+        # so the card always stays in sync with the scoring logic
         color = TIER_COLORS[tier]
         self.configure(fg_color=color)
         self._tier_label.configure(text=TIER_LABELS[tier])

@@ -14,8 +14,11 @@ from passinggrade.checker import check, TIER_NOT_COMPLIANT
 from passinggrade.config import Policy
 from passinggrade.ui.result_card import ResultCard
 
-# Rule names that are shown in the checklist (in display order).
-# Rules that are "not required by policy" are hidden from the UI.
+# Rule names shown in the checklist, in display order.
+# "unique_chars" is intentionally absent: it is a soft/bonus-only rule that
+# affects score but is never a hard requirement, so showing it as a pass/fail
+# item would be misleading to users.
+# Rules disabled by policy are hidden at render time (see _update_rule_rows).
 _DISPLAY_RULES = [
     "min_length",
     "max_length",
@@ -41,7 +44,7 @@ class PassingGradeApp(ctk.CTk):
         super().__init__()
 
         self._policy = policy
-        self._show_password = False
+        self._show_password = False  # Tracks whether the entry field shows plain text or bullets
 
         # Window setup
         self._appearance_mode = "dark"
@@ -85,7 +88,9 @@ class PassingGradeApp(ctk.CTk):
             height=28,
             font=ctk.CTkFont(size=16),
             fg_color="transparent",
-            hover_color="#555555",
+            hover_color="#555555",  # updated per-mode in _toggle_mode
+            border_width=1,
+            border_color="#888888",  # visible outline in both light and dark mode
             command=self._toggle_mode,
         )
         self._mode_btn.pack(side="right", padx=(0, 8))
@@ -172,7 +177,11 @@ class PassingGradeApp(ctk.CTk):
     def _toggle_mode(self) -> None:
         self._appearance_mode = "light" if self._appearance_mode == "dark" else "dark"
         ctk.set_appearance_mode(self._appearance_mode)
-        self._mode_btn.configure(text="☀" if self._appearance_mode == "dark" else "🌙")
+        self._mode_btn.configure(text="☀" if self._appearance_mode == "dark" else "☾")
+        # Use contrasting hover and text colors so the icon is visible in both modes
+        hover = "#555555" if self._appearance_mode == "dark" else "#CCCCCC"
+        text_color = "white" if self._appearance_mode == "dark" else "#333333"
+        self._mode_btn.configure(hover_color=hover, text_color=text_color)
 
     def _toggle_visibility(self) -> None:
         self._show_password = not self._show_password

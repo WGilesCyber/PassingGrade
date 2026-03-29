@@ -189,6 +189,8 @@ def check_no_spaces(password: str, policy: Policy) -> RuleResult:
 def check_max_repeated(password: str, policy: Policy) -> RuleResult:
     # password is not persisted
     limit = policy.max_repeated_chars
+    # Single-pass run-length scan: compare each character to its predecessor.
+    # current_run tracks the active streak; max_run records the longest seen.
     max_run = 1
     current_run = 1
     for i in range(1, len(password)):
@@ -231,7 +233,10 @@ def check_sequences(password: str, policy: Policy) -> RuleResult:
             message="Sequence check (disabled by policy)", is_hard=False
         )
     min_len = policy.min_sequence_length
+    # Case-insensitive: compare lowercase password against lowercase sequence table
     pw_lower = password.lower()
+    # Sliding-window approach: for each known sequence, extract every consecutive
+    # chunk of length min_len and check whether it appears anywhere in the password
     for seq in _SEQUENCES:
         for start in range(len(seq) - min_len + 1):
             chunk = seq[start: start + min_len]
@@ -266,6 +271,8 @@ def check_unique_chars(password: str, policy: Policy) -> RuleResult:
 # Ordered list of all rules; checker.py iterates this
 # ---------------------------------------------------------------------------
 
+# Order matters: checker.py iterates this list in sequence, and the UI
+# displays rules in the same order via _DISPLAY_RULES in app.py
 ALL_RULES = [
     check_min_length,
     check_max_length,
@@ -277,5 +284,5 @@ ALL_RULES = [
     check_max_repeated,
     check_common_passwords,
     check_sequences,
-    check_unique_chars,
+    check_unique_chars,  # Soft rule only — contributes to score but never causes Not Compliant
 ]

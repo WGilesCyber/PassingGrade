@@ -14,31 +14,36 @@ from dataclasses import dataclass, field
 
 @dataclass
 class ScoringConfig:
+    # Points added per character above min_length (capped at max_length_bonus)
     length_bonus_per_char_over_min: int = 2
+    # Maximum total points that the length bonus can contribute
     max_length_bonus: int = 20
+    # Bonus awarded when all four complexity classes are present (upper, lower, digit, special)
     all_complexity_bonus: int = 10
+    # Points added per unique character above min_unique_chars (capped at max_unique_chars_bonus)
     unique_chars_bonus_per_char: int = 1
+    # Maximum total points that the unique-character bonus can contribute
     max_unique_chars_bonus: int = 10
 
 
 @dataclass
 class Policy:
     policy_name: str = "Default Password Policy"
-    # --- Hard rules ---
-    min_length: int = 12
-    max_length: int = 128
-    require_uppercase: bool = True
-    require_lowercase: bool = True
-    require_digit: bool = True
-    require_special: bool = True
-    special_chars: str = "!@#$%^&*()_+-=[]{}|;':\",./<>?"
-    disallow_spaces: bool = False
-    max_repeated_chars: int = 3
-    disallow_common: bool = True
-    disallow_sequences: bool = True
-    min_sequence_length: int = 4
-    # --- Soft scoring ---
-    min_unique_chars: int = 8
+    # --- Hard rules (failure → Not Compliant regardless of score) ---
+    min_length: int = 12           # Minimum accepted password length (characters, not bytes)
+    max_length: int = 128          # Maximum accepted password length
+    require_uppercase: bool = True  # At least one A-Z character required
+    require_lowercase: bool = True  # At least one a-z character required
+    require_digit: bool = True      # At least one 0-9 character required
+    require_special: bool = True    # At least one character from special_chars required
+    special_chars: str = "!@#$%^&*()_+-=[]{}|;':\",./<>?"  # Allowed special characters
+    disallow_spaces: bool = False   # If True, spaces anywhere in the password are rejected
+    max_repeated_chars: int = 3     # Longest run of the same character allowed (e.g. 3 → "aaa" ok, "aaaa" fails)
+    disallow_common: bool = True    # If True, reject passwords found in the common-passwords list
+    disallow_sequences: bool = True # If True, reject passwords containing keyboard/alpha/numeric sequences
+    min_sequence_length: int = 4    # Minimum contiguous sequence length that triggers a sequence failure
+    # --- Soft scoring (affects tier but never causes Not Compliant) ---
+    min_unique_chars: int = 8       # Threshold for unique-character bonus; passwords below this still pass
     scoring: ScoringConfig = field(default_factory=ScoringConfig)
 
 
@@ -47,12 +52,16 @@ class Policy:
 # ---------------------------------------------------------------------------
 
 def _require_bool(name: str, value: object) -> bool:
+    # JSON booleans arrive as Python bool; anything else is a mis-configured field
     if not isinstance(value, bool):
         raise ValueError(f"'{name}' must be true or false, got: {value!r}")
     return value
 
 
 def _require_int(name: str, value: object, min_val: int, max_val: int) -> int:
+    # Explicitly reject booleans: in Python, bool is a subclass of int, so
+    # isinstance(True, int) is True — the extra check prevents accepting true/false
+    # as numeric values (which would silently coerce to 1/0)
     if not isinstance(value, int) or isinstance(value, bool):
         raise ValueError(f"'{name}' must be an integer, got: {value!r}")
     if not (min_val <= value <= max_val):
@@ -163,9 +172,17 @@ def _parse_policy(data: dict) -> Policy:
 # ---------------------------------------------------------------------------
 
 def _exe_dir() -> str:
-    """Return the directory containing the running executable or script."""
+    """Return the directory containing the running executable or script.
+
+    PyInstaller sets sys.frozen = True and bundles everything into a single
+    executable. In that case we want the directory of the .exe, not the
+    unpacked temp directory (sys._MEIPASS). When running from source, we
+    use the directory of the entry-point script (sys.argv[0]).
+    """
     if getattr(sys, "frozen", False):
+        # Running as a PyInstaller-packed executable
         return os.path.dirname(sys.executable)
+    # Running as a normal Python script
     return os.path.dirname(os.path.abspath(sys.argv[0]))
 
 
