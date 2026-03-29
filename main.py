@@ -9,10 +9,36 @@ Passwords exist only in memory for the duration of the session.
 from __future__ import annotations
 
 import argparse
+import ctypes
 import sys
 
 
+def _configure_windows() -> None:
+    """Apply Windows-specific process settings before any UI is created.
+
+    DPI awareness: prevents blurry rendering on high-DPI / 4K displays.
+    App User Model ID: lets Windows group the window correctly in the taskbar
+    and allows the app to be pinned to the Start menu / taskbar.
+    """
+    try:
+        # PROCESS_SYSTEM_DPI_AWARE — crisp on high-DPI displays
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except (AttributeError, OSError):
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except (AttributeError, OSError):
+            pass
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+            "PassingGrade.PasswordChecker.1"
+        )
+    except (AttributeError, OSError):
+        pass
+
+
 def main() -> None:
+    _configure_windows()
+
     parser = argparse.ArgumentParser(
         description="PassingGrade — Password Compliance Checker"
     )

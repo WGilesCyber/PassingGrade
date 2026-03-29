@@ -1,5 +1,5 @@
 # PassingGrade
-Offline, zero-install password compliance checker for organizations.
+Offline, zero-install password compliance checker for organizations. Windows only.
 
 ---
 
@@ -38,35 +38,22 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Or double-click **`PassingGrade.bat`** — it installs dependencies automatically and launches the app.
+Or double-click **`PassingGrade.vbs`** — silent launcher, no console window.
 
 To use a custom policy file:
 ```bash
-python main.py --policy /path/to/your/policy.json
+python main.py --policy C:\path\to\your\policy.json
 ```
 
 ---
 
 ## Building a standalone executable (no Python required)
 
-### Windows
 ```powershell
 pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File build/build_windows.ps1
 ```
 Output: `dist/PassingGrade.exe` — double-click to run, no install needed.
-
-### macOS
-```bash
-pip install -r requirements.txt
-bash build/build_macos.sh
-```
-
-### Linux
-```bash
-pip install -r requirements.txt
-bash build/build_linux.sh
-```
 
 ---
 
@@ -76,8 +63,8 @@ Admins can customize the policy by placing a `policy/policy.json` file next to t
 
 **Config search order:**
 1. `--policy <path>` flag (command line)
-2. `policy/policy.json` next to the executable
-3. `policy/policy.json` in the current working directory
+2. `policy\policy.json` next to the executable
+3. `policy\policy.json` in the current working directory
 4. Built-in NIST-aligned defaults (if no file is found)
 
 **Example `policy/policy.json`:**
@@ -137,7 +124,7 @@ pytest tests/
 ```
 PassingGrade/
 ├── main.py                    # Entry point
-├── PassingGrade.bat           # Double-click launcher (dev + production)
+├── PassingGrade.vbs           # Silent double-click launcher (no console window)
 ├── PassingGrade.spec          # PyInstaller build spec
 ├── passinggrade/
 │   ├── checker.py             # check() — core evaluator
@@ -154,9 +141,7 @@ PassingGrade/
 │   ├── test_checker.py
 │   └── test_config.py
 └── build/
-    ├── build_windows.ps1
-    ├── build_macos.sh
-    └── build_linux.sh
+    └── build_windows.ps1
 ```
 
 ---

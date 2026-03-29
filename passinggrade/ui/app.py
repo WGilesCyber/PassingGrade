@@ -69,14 +69,14 @@ class PassingGradeApp(ctk.CTk):
         ctk.CTkLabel(
             header_frame,
             text="PassingGrade",
-            font=ctk.CTkFont(size=22, weight="bold"),
+            font=ctk.CTkFont(family="Segoe UI", size=22, weight="bold"),
             anchor="w",
         ).pack(side="left")
 
         ctk.CTkLabel(
             header_frame,
             text=self._policy.policy_name,
-            font=ctk.CTkFont(size=12),
+            font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color="#888888",
             anchor="e",
         ).pack(side="right")
@@ -86,7 +86,7 @@ class PassingGradeApp(ctk.CTk):
             text="☀",
             width=32,
             height=28,
-            font=ctk.CTkFont(size=16),
+            font=ctk.CTkFont(family="Segoe UI", size=16),
             fg_color="transparent",
             hover_color="#555555",  # updated per-mode in _toggle_mode
             border_width=1,
@@ -101,7 +101,7 @@ class PassingGradeApp(ctk.CTk):
         ctk.CTkLabel(
             self,
             text="Enter your password:",
-            font=ctk.CTkFont(size=14),
+            font=ctk.CTkFont(family="Segoe UI", size=14),
             anchor="w",
         ).pack(fill="x", padx=20, pady=(14, 4))
 
@@ -116,7 +116,7 @@ class PassingGradeApp(ctk.CTk):
             entry_frame,
             textvariable=self._password_var,
             show="•",
-            font=ctk.CTkFont(size=15),
+            font=ctk.CTkFont(family="Segoe UI", size=15),
             height=40,
             placeholder_text="Type or paste your password…",
         )
@@ -130,7 +130,7 @@ class PassingGradeApp(ctk.CTk):
             command=self._toggle_visibility,
             fg_color="#3a3a3a",
             hover_color="#555555",
-            font=ctk.CTkFont(size=13),
+            font=ctk.CTkFont(family="Segoe UI", size=13),
         )
         self._toggle_btn.pack(side="right", padx=(8, 0))
 
@@ -142,7 +142,7 @@ class PassingGradeApp(ctk.CTk):
         ctk.CTkLabel(
             self,
             text="Requirements:",
-            font=ctk.CTkFont(size=13, weight="bold"),
+            font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             anchor="w",
         ).pack(fill="x", padx=20, pady=(0, 6))
 
@@ -164,7 +164,7 @@ class PassingGradeApp(ctk.CTk):
             lbl = ctk.CTkLabel(
                 self._rules_frame,
                 text="",
-                font=ctk.CTkFont(size=13),
+                font=ctk.CTkFont(family="Segoe UI", size=13),
                 anchor="w",
             )
             lbl.pack(fill="x", pady=1)
@@ -245,7 +245,7 @@ def show_error_dialog(message: str) -> None:
         dialog,
         text=message,
         wraplength=380,
-        font=ctk.CTkFont(size=13),
+        font=ctk.CTkFont(family="Segoe UI", size=13),
         justify="left",
     ).pack(padx=20, pady=(20, 10))
 

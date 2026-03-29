@@ -12,7 +12,7 @@ PassingGrade is a tool that checks whether a password meets your organization's 
 
 ### Getting Started
 
-1. Open **PassingGrade.exe** by double-clicking it (or double-click **PassingGrade.bat** if provided).
+1. Open **PassingGrade.exe** by double-clicking it (or double-click **PassingGrade.vbs** if running from source).
 2. The window opens immediately. No installation, no login required.
 3. You will see the password entry field at the top of the window.
 
@@ -98,7 +98,7 @@ PassingGrade is designed so that your password never leaves your device.
 ### Common Questions
 
 **Can I paste my password instead of typing it?**
-Yes. Click inside the password field and paste normally (Ctrl+V on Windows). The result updates immediately.
+Yes. Click inside the password field and paste normally (Ctrl+V). The result updates immediately.
 
 **Does this tool send my password to anyone?**
 No. PassingGrade has no internet connection and no telemetry of any kind. It checks your password locally, on your own computer only.
@@ -148,10 +148,9 @@ This section covers deploying PassingGrade to your organization and configuring 
 
 Build or obtain `PassingGrade.exe`. Distribute it to users along with:
 
-- `PassingGrade.bat` — optional double-click launcher (falls back to running from Python source if no exe is found, and shows a clear error if neither is available)
-- `policy/policy.json` — your organization's custom policy file (see below); if omitted, built-in defaults are used
+- `policy\policy.json` — your organization's custom policy file (see below); if omitted, built-in defaults are used
 
-Users do not need Python, .NET, or any other runtime. The `.exe` is fully self-contained.
+Users do not need Python, .NET, or any other runtime. The `.exe` is fully self-contained. Double-click it to launch — no console window, no installer.
 
 **Running from Python source (developer / IT use)**
 
@@ -160,11 +159,11 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Or double-click `PassingGrade.bat` — it auto-installs dependencies via `pip` and launches `main.py`.
+Or double-click `PassingGrade.vbs` — launches silently with no console window.
 
 **Loading a policy at a specific path**
 
-```bash
+```
 PassingGrade.exe --policy "C:\Policies\company_policy.json"
 python main.py --policy "C:\Policies\company_policy.json"
 ```
@@ -296,23 +295,10 @@ The dialog tells users to contact IT if it keeps appearing. Validate your `polic
 
 Requires Python 3.11+ and pip on the build machine only. End users need nothing.
 
-**Windows:**
 ```powershell
 pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File build/build_windows.ps1
 ```
 Output: `dist/PassingGrade.exe`
-
-**macOS:**
-```bash
-pip install -r requirements.txt
-bash build/build_macos.sh
-```
-
-**Linux:**
-```bash
-pip install -r requirements.txt
-bash build/build_linux.sh
-```
 
 The build uses `PassingGrade.spec` (committed to the repository) to ensure a consistent, reproducible output. The `policy/policy.json` and `assets/common_passwords.txt` files are bundled into the executable automatically.

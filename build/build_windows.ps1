@@ -1,4 +1,4 @@
-# PassingGrade — Windows build script
+# PassingGrade — Windows build script (Windows only)
 # Produces: dist/PassingGrade.exe (single file, no console window)
 #
 # Requirements (dev machine only — end users need nothing):
