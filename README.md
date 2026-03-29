@@ -38,7 +38,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Or double-click **`PassingGrade.vbs`** — silent launcher, no console window.
+Or double-click **`PassingGrade.vbs`** — silent launcher
 
 To use a custom policy file:
 ```bash
